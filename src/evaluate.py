@@ -1,0 +1,49 @@
+import joblib
+import numpy as np
+import pandas as pd
+from feature_extractor import fingerprint_features
+import matplotlib.pyplot as plt
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import (
+    roc_auc_score,
+    accuracy_score,
+    precision_recall_curve,
+    f1_score,
+    confusion_matrix,
+    classification_report,
+)
+
+
+def evalute_random_forest(test_dataset_path,model_path):
+    df_test = pd.read_csv(test_dataset_path)
+
+    X_test = [fingerprint_features(smi) for smi in df_test["smiles"]]
+    X_test = [np.array(fp) for fp in X_test if fp is not None] 
+    y_test = df_test["P1"].values[:len(X_test)] 
+
+    model = joblib.load(model_path)
+    y_pred = model.predict(X_test)
+    y_proba = model.predict_proba(X_test)[:, 1]  # Probabilities for AUC
+
+    # Metrics
+    print(f"Accuracy: {accuracy_score(y_test, y_pred):.2f}")
+    print(f"AUC-ROC: {roc_auc_score(y_test, y_proba):.2f}")
+    print(f"F1 Score: {f1_score(y_test, y_pred):.2f}")
+    print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+    # Confusion Matrix
+    conf_mat = confusion_matrix(y_test, y_pred)
+    print("Confusion Matrix:\n", conf_mat)
+
+
+    # fold CV on best model
+    cv_scores = cross_val_score(model, X_test, y_test, cv=5, scoring="roc_auc")
+    print(f"Cross-validated AUC: {np.mean(cv_scores):.2f} (±{np.std(cv_scores):.2f})")
+
+
+if __name__ == "__main__":
+    test_dataset_path = "/home/oussama/test_technique/data/model1/test_data.csv"
+    model_path = "/home/oussama/test_technique/models/model1.joblib"
+    evalute_random_forest(test_dataset_path,model_path)
+
+    

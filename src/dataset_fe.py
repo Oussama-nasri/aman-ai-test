@@ -1,5 +1,13 @@
 from feature_extractor import fingerprint_features
 import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
+from feature_extractor import fingerprint_features
+
+
+
 
 def main():
     df = pd.read_csv("/home/oussama/test_technique/data/balanced_dataset_single.csv")
@@ -9,8 +17,8 @@ def main():
 
     new_df['mol_id'] = df['mol_id']
     new_df['smiles'] = df['smiles']
+    new_df['P1'] = df['P1']
     new_df['feature_extracted'] = df['smiles'].apply(fingerprint_features)
-
     return new_df
 
 
