@@ -12,4 +12,3 @@ def fingerprint_features(smile_string, radius=2, size=2048):
                                                           useFeatures=False
                                                           )
 
-print(fingerprint_features("Cc1cccc(N2CCN(C(=O)C34CC5CC(CC(C5)C3)C4)CC2)c1C", radius=2, size=2048))
