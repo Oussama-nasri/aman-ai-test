@@ -1,0 +1,77 @@
+openapi: 3.0.3
+info:
+  title: Molecular Prediction API
+  description: API for predicting molecular properties (e.g., P1 values) from SMILES strings using different models.
+  version: 1.0.0
+servers:
+  - url: /api
+    description: Main API server
+
+paths:
+  /predict:
+    post:
+      summary: Predict molecular property from a SMILES string
+      description: >
+        Takes a SMILES string and a model number (1 or 2), and returns the predicted value and optionally class probabilities.
+        - **Model 1** uses `predict_p1`
+        - **Model 2** uses `predict_p2`
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - smiles
+                - model
+              properties:
+                smiles:
+                  type: string
+                  description: SMILES string of the molecule
+                  example: COC(=O)c1ccc(Oc2nc(NC(C)C)nc(SC)n2)cc1
+                model:
+                  type: integer
+                  description: >
+                    Model to use for prediction.  
+                    - `1` for model `predict_p1`  
+                    - `2` for model `predict_p2`
+                  enum: [1, 2]
+                  example: 1
+      responses:
+        '200':
+          description: Successful prediction
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  prediction:
+                    type: integer
+                    description: Predicted class label
+                    example: 1
+                  probabilities:
+                    type: array
+                    items:
+                      type: number
+                    description: Class probabilities (if available)
+                    example: [0.1, 0.9]
+        '400':
+          description: Bad request (e.g., missing SMILES or model, or invalid model)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Missing "smiles" or "model" in request body
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error

@@ -1,17 +1,20 @@
+#Importations
 import pandas as pd
 import numpy as np
 from feature_extractor import fingerprint_features
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
 from scipy.stats import randint
 from sklearn.model_selection import RandomizedSearchCV
 import joblib
+import tensorflow as tf
+import argparse
 
+def train_model1(data_path,model_path):
+    """
+    Trains a RandomForestClassifier on fingerprint features from SMILES strings and saves the best model.
 
-
-def train_model1(data_path):
+    """
     df_train =pd.read_csv()
-
 
     X_train = [fingerprint_features(smi) for smi in df_train["smiles"]]
     X_train = [np.array(fp) for fp in X_train if fp is not None] 
@@ -37,8 +40,18 @@ def train_model1(data_path):
     print(f"Best params: {search.best_params_}")
 
     #Save model
-    joblib.dump(best_model, "/home/oussama/test_technique/models/model1.joblib")
+    joblib.dump(best_model, model_path)
+
+
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Train Random Forest model.")
+    parser.add_argument("--data_path", type=str, required=True, help="Path to training CSV data")
+    parser.add_argument("--model_path", type=str, required=True, help="Path to save model")
+    args = parser.parse_args()
+
+    train_model1(args.data_path,args.model_path)
 
 if __name__ == "__main__":
-    data_path = "/home/oussama/test_technique/data/model1/train_data.csv"
-    train_model1(data_path)
+    main()

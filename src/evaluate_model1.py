@@ -12,9 +12,14 @@ from sklearn.metrics import (
     confusion_matrix,
     classification_report,
 )
+import argparse
+
 
 
 def evalute_random_forest(test_dataset_path,model_path):
+    """
+    Evaluates a trained RandomForest model on a test dataset.
+    """
     df_test = pd.read_csv(test_dataset_path)
 
     X_test = [fingerprint_features(smi) for smi in df_test["smiles"]]
@@ -41,9 +46,17 @@ def evalute_random_forest(test_dataset_path,model_path):
     print(f"Cross-validated AUC: {np.mean(cv_scores):.2f} (±{np.std(cv_scores):.2f})")
 
 
+
+def main():
+    parser = argparse.ArgumentParser(description="Evaluate Random Forest model.")
+    parser.add_argument("--test_dataset_path", type=str, required=True, help="Path to test dataset CSV file")
+    parser.add_argument("--model_path", type=str, required=True, help="Path to saved model.joblib")
+    args = parser.parse_args()
+
+    evalute_random_forest(args.test_dataset_path, args.model_path)
+
 if __name__ == "__main__":
-    test_dataset_path = "/home/oussama/test_technique/data/model1/test_data.csv"
-    model_path = "/home/oussama/test_technique/models/model1.joblib"
-    evalute_random_forest(test_dataset_path,model_path)
+    main()
+
 
     

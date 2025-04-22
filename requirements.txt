@@ -1,1 +1,7 @@
-sklearn
+
+joblib==1.1.0
+tensorflow-cpu==2.5.0
+
+flask==2.0.3
+flask-cors==3.0.10
+flask-swagger-ui==3.36.0
